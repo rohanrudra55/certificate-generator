@@ -8,28 +8,29 @@ class Marker:
     def __init__(self):
         self.winName="OutputImage"
     def display(self):
-        print(self.winName)
         cv.imshow(self.winName,self.img)
-        if cv.waitKey(1)==26:
+        if cv.waitKey(1) & 0xFF == 27: #Press Escape Key to terminate window
             cv.destroyAllWindows()
-            exit(0)
+            return 1
+        return 0
+
     def drawCircle(self,event,x,y,flags,param):
-        if event == cv.EVENT_LBUTTONDBLCLK:
+        if event == cv.EVENT_LBUTTONDOWN:
             cv.putText(self.img,"coordinates (%d,%d)"%(x,y),(60,60),2,1,(0,255,0))
 
     def readClick(self):
+        cv.namedWindow(self.winName)
         cv.setMouseCallback(self.winName,self.drawCircle)
         while(1):
-            cv.imshow(self.winName,self.img)
-            if cv.waitKey(10) & 0xFF == 27:   #Press Escape Key to terminate window
-                break
-            cv.destroyAllWindows()  
+            # cv.setMouseCallback(self.winName,self.drawCircle)
+            if self.display():
+                break 
+            
 
     def loadImage(self):
         filepath=input("Drag image>> ")
         self.img=cv.imread(filepath)
-        # self.display()
-        cv.namedWindow(self.winName)
+        self.display()
         self.readClick()
 
 if __name__=='__main__':
